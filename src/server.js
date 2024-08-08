@@ -3,8 +3,12 @@ const express = require("express");
 const http = require("http");
 const { StatusCodes } = require("http-status-codes");
 const { port } = require("../config");
+const { logger } = require("./handlers");
+const { requestLogger } = require("./middlewares");
 
 const app = express();
+
+app.use(requestLogger);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -19,5 +23,5 @@ app.get("/", (_, response) => {
 app.set("port", port);
 const server = http.createServer(app);
 server.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  logger.info(`Server is running on port ${port}`);
 });
