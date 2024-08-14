@@ -1,8 +1,20 @@
 const Sequelize = require("sequelize");
-const { databaseOptions } = require("../../config");
+const { databaseSettings } = require("../../config");
 const { logger } = require("../handlers");
 
-const dbContext = new Sequelize(databaseOptions());
+const databaseOptions = {
+  database: "tasktrail_db",
+  dialect: "sqlite",
+  storage: `${databaseSettings.path}/${databaseSettings.fileName}`,
+  pool: {
+    max: databaseSettings.poolMax,
+    min: databaseSettings.poolMin,
+    acquire: databaseSettings.poolAcquire,
+    idle: databaseSettings.poolIdle,
+  },
+  logging: databaseSettings.logging,
+};
+const dbContext = new Sequelize(databaseOptions);
 
 module.exports = {
   Sequelize: Sequelize,

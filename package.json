@@ -18,10 +18,16 @@
   "license": "ISC",
   "description": "The Task Trail App API is a backend service built using Node.js, Express.js, Sequelize, and SQLite. It is designed to manage tasks efficiently, providing a robust and scalable solution for task management applications. This API serves as the backbone for the Task Trail App, facilitating operations such as creating, reading, updating, and deleting tasks.",
   "dependencies": {
-    "body-parser": "^1.20.2",
+    "bcrypt": "^5.1.1",
+    "connect-sqlite3": "^0.9.15",
+    "cookie-parser": "^1.4.6",
     "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "express-validator": "^7.2.0",
     "http-status-codes": "^2.3.0",
     "morgan": "^1.10.0",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
     "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7",
     "winston": "^3.14.1"
