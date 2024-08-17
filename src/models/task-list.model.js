@@ -6,8 +6,15 @@ module.exports = (dbContext, Sequelize) => {
       allowNull: false,
       primaryKey: true,
     },
-    name: {
+    title: {
+      type: Sequelize.STRING(50),
+      allowNull: false,
+    },
+    description: {
       type: Sequelize.STRING,
+    },
+    ownerId: {
+      type: Sequelize.UUID,
       allowNull: false,
     },
   });

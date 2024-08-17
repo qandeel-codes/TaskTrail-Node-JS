@@ -6,13 +6,14 @@ const { logger } = require("../handlers");
 
 module.exports = {
   getAll: (request, response) => {
-    TaskList.findAll()
+    return TaskList.findAll({ where: { ownerId: request.user.id } })
       .then((taskLists) => {
         return response.status(StatusCodes.OK).json(taskLists);
       })
       .catch((error) => {
-        logger.error(`Cannot retrieve task lists, Something went wrong`);
-        logger.error(error);
+        logger.error(
+          `Cannot retrieve task lists, Something went wrong: ${error}`
+        );
         return response
           .status(StatusCodes.INTERNAL_SERVER_ERROR)
           .send({ error: `Cannot retrieve task lists, Something went wrong` });
@@ -20,29 +21,17 @@ module.exports = {
   },
 
   getById: (request, response) => {
-    const { id } = request.params;
-
-    TaskList.findByPk(id)
-      .then((tasklist) => {
-        if (tasklist) {
-          return response.status(StatusCodes.OK).json(tasklist);
-        }
-        return response.sendStatus(StatusCodes.NOT_FOUND);
-      })
-      .catch((error) => {
-        logger.error(
-          `Cannot retrieve task list with ID '${id}', Something went wrong`
-        );
-        Logger.error(error);
-        return response.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-          error: `Cannot retrieve task list with ID '${id}', Something went wrong`,
-        });
-      });
+    const { taskList } = response.locals;
+    return response.status(StatusCodes.OK).json(taskList);
   },
 
   create: (request, response) => {
-    const { name } = request.body;
-    TaskList.create({ name: name })
+    const { title, description } = request.body;
+    TaskList.create({
+      title: title,
+      description: description,
+      ownerId: request.user.id,
+    })
       .then((taskList) => {
         return response.status(StatusCodes.CREATED).json(taskList);
       })
@@ -56,36 +45,21 @@ module.exports = {
   },
 
   update: (request, response) => {
-    const {
-      params: { id },
-      body: { name },
-    } = request;
+    const { taskList } = response.locals;
+    const { title, description } = request.body;
 
-    TaskList.findByPk(id)
-      .then((tasklist) => {
-        if (tasklist) {
-          return tasklist
-            .update({ name: name })
-            .then(() => {
-              return response.sendStatus(StatusCodes.NO_CONTENT);
-            })
-            .catch((error) => {
-              logger.error(
-                `Task list with ID '${id}' not updated, Something went wrong`
-              );
-              logger.error(error);
-              return response.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                error: `Task list with ID '${id}' not updated, Something went wrong`,
-              });
-            });
-        }
-        return response.sendStatus(StatusCodes.NOT_FOUND);
+    taskList.title = title;
+    taskList.description = description ?? null;
+
+    taskList
+      .save()
+      .then(() => {
+        return response.sendStatus(StatusCodes.NO_CONTENT);
       })
       .catch((error) => {
         logger.error(
-          `Task list with ID '${id}' not updated, Something went wrong`
+          `Task list with ID '${id}' not updated, Something went wrong: ${error}`
         );
-        logger.error(error);
         return response.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
           error: `Task list with ID '${id}' not updated, Something went wrong`,
         });
@@ -93,36 +67,21 @@ module.exports = {
   },
 
   updatePartially: (request, response) => {
-    const {
-      params: { id },
-      body: { name },
-    } = request;
+    const { taskList } = response.locals;
+    const { title, description } = request.body;
 
-    TaskList.findByPk(id)
-      .then((tasklist) => {
-        if (tasklist) {
-          return tasklist
-            .update({ name: name })
-            .then(() => {
-              return response.sendStatus(StatusCodes.NO_CONTENT);
-            })
-            .catch((error) => {
-              logger.error(
-                `Task list with ID '${id}' not updated, Something went wrong`
-              );
-              logger.error(error);
-              return response.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                error: `Task list with ID '${id}' not updated, Something went wrong`,
-              });
-            });
-        }
-        return response.sendStatus(StatusCodes.NOT_FOUND);
+    taskList.title = title ?? taskList.title;
+    taskList.description = description ?? taskList.description;
+
+    taskList
+      .save()
+      .then(() => {
+        return response.sendStatus(StatusCodes.NO_CONTENT);
       })
       .catch((error) => {
         logger.error(
-          `Task list with ID '${id}' not updated, Something went wrong`
+          `Task list with ID '${id}' not updated, Something went wrong: ${error}`
         );
-        logger.error(error);
         return response.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
           error: `Task list with ID '${id}' not updated, Something went wrong`,
         });
@@ -130,27 +89,12 @@ module.exports = {
   },
 
   delete: (request, response) => {
-    const { id } = request.params;
+    const { taskList } = response.locals;
 
-    TaskList.findByPk(id)
-      .then((tasklist) => {
-        if (tasklist) {
-          return tasklist
-            .destroy()
-            .then(() => {
-              return response.sendStatus(StatusCodes.NO_CONTENT);
-            })
-            .catch((error) => {
-              logger.error(
-                `Task list with ID '${id}' not deleted, Something went wrong`
-              );
-              logger.error(error);
-              return response.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-                error: `Task list with ID '${id}' not deleted, Something went wrong`,
-              });
-            });
-        }
-        return response.sendStatus(StatusCodes.NOT_FOUND);
+    return taskList
+      .destroy()
+      .then(() => {
+        return response.sendStatus(StatusCodes.NO_CONTENT);
       })
       .catch((error) => {
         logger.error(
