@@ -19,7 +19,7 @@ const dbContext = new Sequelize(databaseOptions);
 module.exports = {
   Sequelize: Sequelize,
   dbContext: dbContext,
-  models: require("../models")(dbContext, Sequelize),
+  models: require("./models")(dbContext, Sequelize),
 
   connect: () => {
     return dbContext
