@@ -4,12 +4,23 @@ const {
 } = require("../data");
 const { logger } = require("../handlers");
 
+const mapTask = (task) => {
+  return {
+    id: task.id,
+    title: task.title,
+    description: task.description,
+    isCompleted: task.isCompleted,
+    createdAt: task.createdAt,
+    updatedAt: task.updatedAt,
+  };
+};
+
 module.exports = {
   getAll: (request, response) => {
     const { id } = response.locals.taskList;
     return Task.findAll({ where: { listId: id } })
       .then((tasks) => {
-        return response.status(StatusCodes.OK).json(tasks);
+        return response.status(StatusCodes.OK).json(tasks.map(mapTask));
       })
       .catch((error) => {
         logger.error(
@@ -23,7 +34,7 @@ module.exports = {
 
   getById: (request, response) => {
     const { task } = response.locals;
-    return response.status(StatusCodes.OK).json(task);
+    return response.status(StatusCodes.OK).json(mapTask(task));
   },
 
   create: (request, response) => {
@@ -36,7 +47,10 @@ module.exports = {
       listId: id,
     })
       .then((task) => {
-        return response.status(StatusCodes.CREATED).json(task);
+        return response.status(StatusCodes.CREATED).json({
+          message: "Task created successfully",
+          data: mapTask(task),
+        });
       })
       .catch((error) => {
         logger.error(`Task not created, Something went wrong: ${error}`);

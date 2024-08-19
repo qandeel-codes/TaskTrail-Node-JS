@@ -22,7 +22,14 @@ module.exports = {
         password: hashedPassword,
       });
       const savedUser = await newUser.save();
-      return response.status(StatusCodes.CREATED).json(savedUser);
+      return response.status(StatusCodes.CREATED).json({
+        message: "User registered successfully",
+        data: {
+          userId: savedUser.id,
+          email: savedUser.email,
+          name: savedUser.name,
+        },
+      });
     } catch (error) {
       logger.error(`Registration failed, Something went wrong: ${error}`);
       response
@@ -31,19 +38,28 @@ module.exports = {
     }
   },
 
-  login: (_, response) => {
-    return response
-      .status(StatusCodes.OK)
-      .send({ message: `Authentication Done` });
+  login: (request, response) => {
+    const { user } = request;
+    return response.status(StatusCodes.OK).send({
+      message: `User logged in successfully`,
+      data: {
+        userId: user.id,
+        email: user.email,
+        name: user.name,
+      },
+    });
   },
 
   status: (request, response) => {
     const { user } = request;
     if (user) {
       return response.status(StatusCodes.OK).send({
-        message: "Authenticated User",
-        userId: user.id,
-        name: user.name,
+        message: `User already logged in`,
+        data: {
+          userId: user.id,
+          email: user.email,
+          name: user.name,
+        },
       });
     }
     return response.sendStatus(StatusCodes.UNAUTHORIZED);
@@ -53,7 +69,9 @@ module.exports = {
     if (!request.user) return response.sendStatus(StatusCodes.UNAUTHORIZED);
     request.logout((error) => {
       if (error) return response.sendStatus(StatusCodes.BAD_REQUEST);
-      response.sendStatus(StatusCodes.OK);
+      response
+        .status(StatusCodes.OK)
+        .json({ message: "User logged out successfully" });
     });
   },
 };

@@ -1,14 +1,32 @@
 const { StatusCodes } = require("http-status-codes");
 const {
+  dbContext,
   models: { TaskList },
 } = require("../data");
 const { logger } = require("../handlers");
+
+const mapTaskList = (list) => {
+  return {
+    id: list.id,
+    title: list.title,
+  };
+};
+
+const mapTaskListDetailed = (list) => {
+  return {
+    id: list.id,
+    title: list.title,
+    description: list.description,
+    createdAt: list.createdAt,
+    updatedAt: list.updatedAt,
+  };
+};
 
 module.exports = {
   getAll: (request, response) => {
     return TaskList.findAll({ where: { ownerId: request.user.id } })
       .then((taskLists) => {
-        return response.status(StatusCodes.OK).json(taskLists);
+        return response.status(StatusCodes.OK).json(taskLists.map(mapTaskList));
       })
       .catch((error) => {
         logger.error(
@@ -16,13 +34,13 @@ module.exports = {
         );
         return response
           .status(StatusCodes.INTERNAL_SERVER_ERROR)
-          .send({ error: `Cannot retrieve task lists, Something went wrong` });
+          .send({ error: `Cannot retrieve lists, Something went wrong` });
       });
   },
 
   getById: (request, response) => {
     const { taskList } = response.locals;
-    return response.status(StatusCodes.OK).json(taskList);
+    return response.status(StatusCodes.OK).json(mapTaskListDetailed(taskList));
   },
 
   create: (request, response) => {
@@ -33,10 +51,13 @@ module.exports = {
       ownerId: request.user.id,
     })
       .then((taskList) => {
-        return response.status(StatusCodes.CREATED).json(taskList);
+        return response.status(StatusCodes.CREATED).json({
+          message: "List created successfully",
+          data: mapTaskList(taskList),
+        });
       })
       .catch((error) => {
-        logger.error(`Task list not created, Something went wrong`);
+        logger.error(`List not created, Something went wrong`);
         logger.error(error);
         return response
           .status(StatusCodes.INTERNAL_SERVER_ERROR)

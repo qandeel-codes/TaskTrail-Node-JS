@@ -25,10 +25,10 @@ const AttachTaskList = (request, response, next) => {
     })
     .catch((error) => {
       logger.error(
-        `Cannot attach task list with ID '${id}' to the response, Something went wrong: ${error}`
+        `Cannot attach list with ID '${id}' to the response, Something went wrong: ${error}`
       );
       return response.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
-        error: `Cannot retrieve task list with ID '${id}', Something went wrong`,
+        error: `Cannot retrieve list with ID '${id}', Something went wrong`,
       });
     });
 };
