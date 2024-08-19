@@ -128,6 +128,7 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-.vscode/settings.json
-data/.DS_Store
-data/tasktrail.db
+
+.vscode/
+data/
+logs/
