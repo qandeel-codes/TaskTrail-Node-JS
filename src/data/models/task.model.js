@@ -1,5 +1,5 @@
 module.exports = (dbContext, Sequelize) => {
-  return dbContext.define("tasks", {
+  const Task = dbContext.define("task", {
     id: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
@@ -17,9 +17,7 @@ module.exports = (dbContext, Sequelize) => {
       type: Sequelize.BOOLEAN,
       defaultValue: 0,
     },
-    listId: {
-      type: Sequelize.UUID,
-      allowNull: false,
-    },
   });
+
+  return Task;
 };

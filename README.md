@@ -96,7 +96,7 @@ Here are some of the primary endpoints available:
 
 ## Configuration
 
-The API configuration settings must be stored into environment variable using `.env` file. You have to add this file to your solution directory *(this file is git untracked)*, I have added an example file `.env.example` which explian the requiered options that are used in the API. You can build your file according you prefered settings such as database connection details and server port.
+The API configuration settings must be stored into environment variable using `.env` file. You have to add this file to your solution directory *(this file is git untracked)*, I have added an example file `.env.example` which explain the required options that are used in the API. You can build your file according you preferred settings such as database connection details and server port.
 
 ## Testing
 

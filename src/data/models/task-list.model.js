@@ -1,5 +1,5 @@
 module.exports = (dbContext, Sequelize) => {
-  return dbContext.define("task_lists", {
+  return dbContext.define("task_list", {
     id: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,

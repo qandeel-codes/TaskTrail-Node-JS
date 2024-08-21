@@ -1,5 +1,5 @@
 module.exports = (dbContext, Sequelize) => {
-  return dbContext.define("users", {
+  return dbContext.define("user", {
     id: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,

@@ -16,9 +16,10 @@ const mapTask = (task) => {
 };
 
 module.exports = {
+  mapTask: mapTask,
   getAll: (request, response) => {
     const { id } = response.locals.taskList;
-    return Task.findAll({ where: { listId: id } })
+    return Task.findAll({ where: { taskListId: id } })
       .then((tasks) => {
         return response.status(StatusCodes.OK).json(tasks.map(mapTask));
       })
@@ -32,9 +33,15 @@ module.exports = {
       });
   },
 
-  getById: (request, response) => {
+  getById: async (request, response) => {
     const { task } = response.locals;
-    return response.status(StatusCodes.OK).json(mapTask(task));
+    const list = await task.getTaskList();
+    return response
+      .status(StatusCodes.OK)
+      .json({
+        ...mapTask(task),
+        taskList: require("./task-lists.controller").mapTaskListDetailed(list),
+      });
   },
 
   create: (request, response) => {
@@ -44,7 +51,7 @@ module.exports = {
       title: title,
       description: description,
       isCompleted: isCompleted,
-      listId: id,
+      taskListId: id,
     })
       .then((task) => {
         return response.status(StatusCodes.CREATED).json({

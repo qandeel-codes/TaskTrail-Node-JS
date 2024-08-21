@@ -35,7 +35,7 @@ const AttachTaskList = (request, response, next) => {
 const AttachTaskItem = (request, response, next) => {
   const { listId, id } = request.params;
 
-  Task.findOne({ where: { id: id, listId: listId } })
+  Task.findOne({ where: { id: id, taskListId: listId } })
     .then((task) => {
       if (task) {
         response.locals.task = task;

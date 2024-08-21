@@ -23,6 +23,8 @@ const mapTaskListDetailed = (list) => {
 };
 
 module.exports = {
+  mapTaskList: mapTaskList,
+  mapTaskListDetailed: mapTaskListDetailed,
   getAll: (request, response) => {
     return TaskList.findAll({ where: { ownerId: request.user.id } })
       .then((taskLists) => {
@@ -38,9 +40,13 @@ module.exports = {
       });
   },
 
-  getById: (request, response) => {
+  getById: async (request, response) => {
     const { taskList } = response.locals;
-    return response.status(StatusCodes.OK).json(mapTaskListDetailed(taskList));
+    const tasks = await taskList.getTasks();
+    return response.status(StatusCodes.OK).json({
+      ...mapTaskListDetailed(taskList),
+      tasks: tasks.map(require("./tasks.controller").mapTask),
+    });
   },
 
   create: (request, response) => {

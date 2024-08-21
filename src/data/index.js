@@ -23,7 +23,7 @@ module.exports = {
 
   connect: () => {
     return dbContext
-      .sync({ alter: true })
+      .sync()
       .then(() => {
         logger.info("Database synced successfully.");
         return dbContext
